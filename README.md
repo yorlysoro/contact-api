@@ -1,5 +1,3 @@
----
-
 # Contact Management API (Golang)
 
 A robust, production-ready RESTful API for managing contacts with hierarchical relationships (Parent/Child). Built using **Clean Architecture**, **TDD**, and the **Gin/GORM** ecosystem.
