@@ -33,10 +33,12 @@ package main
 
 import (
 	"log"
+	"os"
 
-	"contact-api/internal/auth"
-	"contact-api/internal/contact"
-	"contact-api/internal/models"
+	"github.com/joho/godotenv"
+	"github.com/yorlysoro/contact-api/internal/auth"
+	"github.com/yorlysoro/contact-api/internal/contact"
+	"github.com/yorlysoro/contact-api/internal/models"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite" // Using SQLite for simplicity; swap for Postgres/MySQL easily
@@ -44,6 +46,16 @@ import (
 )
 
 func main() {
+
+	// Load .env at the start
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using system environment variables")
+	}
+
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET environment variable is required")
+	}
 	// 1. Initialize Database
 	// In production, use environment variables for the connection string
 	db, err := gorm.Open(sqlite.Open("contacts.db"), &gorm.Config{})
@@ -53,7 +65,7 @@ func main() {
 
 	// 2. Run Auto-Migrations
 	// This creates the tables based on your structs
-	err = db.AutoMigrate(&models.Contact{}) // Add &models.User{} when implemented
+	err = db.AutoMigrate(&models.Contact{}, &models.User{}) // Add &models.User{} when implemented
 	if err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
@@ -68,7 +80,7 @@ func main() {
 	r := gin.Default()
 
 	// 5. Setup Routes
-	setupRoutes(r, contactHandler)
+	setupRoutes(r, contactHandler, db)
 
 	// 6. Start Server
 	log.Println("Server running on http://localhost:8080")
@@ -77,9 +89,11 @@ func main() {
 	}
 }
 
-func setupRoutes(r *gin.Engine, ch *contact.Handler) {
+func setupRoutes(r *gin.Engine, ch *contact.Handler, db *gorm.DB) {
+	authHandler := &auth.AuthHandler{DB: db}
 	v1 := r.Group("/api/v1")
 	{
+
 		// Contact Routes - Protected by JWT Middleware
 		contacts := v1.Group("/contacts")
 		contacts.Use(auth.AuthMiddleware())
@@ -90,8 +104,8 @@ func setupRoutes(r *gin.Engine, ch *contact.Handler) {
 			// Future: contacts.DELETE("/:id", ch.Delete)
 		}
 
-		// Public Routes (Example)
-		// v1.POST("/register", userHandler.Register)
-		// v1.POST("/login", userHandler.Login)
+		// Public Routes
+		v1.POST("/register", authHandler.Register)
+		v1.POST("/login", authHandler.Login)
 	}
 }

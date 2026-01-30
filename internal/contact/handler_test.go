@@ -32,10 +32,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package contact
 
 import (
-	"contact-api/internal/models"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/yorlysoro/contact-api/internal/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"

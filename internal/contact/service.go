@@ -32,8 +32,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package contact
 
 import (
-	"contact-api/internal/models"
 	"errors"
+
+	"github.com/yorlysoro/contact-api/internal/models"
 )
 
 type Service interface {

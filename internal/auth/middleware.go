@@ -36,6 +36,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/yorlysoro/contact-api/internal/contact"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -68,7 +69,7 @@ func AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
-func SetupRoutes(router *gin.Engine, handler *Handler, authMiddleware gin.HandlerFunc) {
+func SetupRoutes(router *gin.Engine, handler *contact.Handler, authMiddleware gin.HandlerFunc) {
 	api := router.Group("/api/v1")
 	{
 		// Protected routes

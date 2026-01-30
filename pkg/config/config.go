@@ -7,15 +7,15 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-	list of conditions and the following disclaimer.
+   list of conditions and the following disclaimer.
 
 2. Redistributions in binary form must reproduce the above copyright notice,
-	this list of conditions and the following disclaimer in the documentation
-	and/or other materials provided with the distribution.
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
 
 3. Neither the name of the copyright holder nor the names of its
-	contributors may be used to endorse or promote products derived from
-	this software without specific prior written permission.
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -28,37 +28,23 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-// internal/contact/repository.go
-package contact
+// pkg/config/config.go
+package config
 
 import (
-	"github.com/yorlysoro/contact-api/internal/models"
-	"gorm.io/gorm"
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
-type Repository interface {
-	Create(contact *models.Contact) error
-	FindByID(id uint) (*models.Contact, error)
-}
-
-type repository struct {
-	db *gorm.DB
-}
-
-func NewRepository(db *gorm.DB) Repository {
-	return &repository{db}
-}
-
-func (r *repository) Create(contact *models.Contact) error {
-	return r.db.Create(contact).Error
-}
-
-func (r *repository) FindByID(id uint) (*models.Contact, error) {
-	var contact models.Contact
-	// Preload("Children") allows us to see related contacts in one query
-	err := r.db.Preload("Children").First(&contact, id).Error
+// LoadConfig loads the .env file and returns a value by key
+func LoadConfig(key string) string {
+	// Load .env file
+	err := godotenv.Load()
 	if err != nil {
-		return nil, err
+		log.Fatal("Error loading .env file")
 	}
-	return &contact, nil
+
+	return os.Getenv(key)
 }

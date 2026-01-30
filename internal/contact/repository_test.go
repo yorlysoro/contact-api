@@ -32,8 +32,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package contact
 
 import (
-	"contact-api/internal/models"
 	"testing"
+
+	"github.com/yorlysoro/contact-api/internal/models"
 
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
